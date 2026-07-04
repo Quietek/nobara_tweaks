@@ -1,4 +1,5 @@
 # nobara_tweaks
+***THIS REPOSITORY IS A WIP AND IS CURRENTLY UNFINISHED, DO NOT FOLLOW THESE GUIDES/SCRIPTS IF YOU SEE THIS WARNING, WAIT UNTIL THE SCRIPTS ARE FINISHED*** Thank you for your patience until I've finished writing these scripts and guides.
 
 My own tweaks to nobara to use sway in place of KDE, unlock a luks encrypted root with a usb key, change the default username and set a password while maintaining auto-login, add better multi-monitor support, add secure boot (where supported), and add various keyboard shortcuts for easy switching between desktop/gaming mode. ***Please note these scripts and guides come with no warranty, support, or guarantees and is in no way associated with the nobara linux project or glorious eggroll's other work.***
 

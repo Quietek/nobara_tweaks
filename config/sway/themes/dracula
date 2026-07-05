@@ -1,9 +1,0 @@
-default_border pixel 2
-gaps top 4
-gaps inner 10
-client.focused          #BD93F9         #BD93F9         #242530         #BD93F9         #BD93F9
-client.focused_inactive #252530         #242530         #BD93F9         #242530         #242530
-client.unfocused        #242530         #242530         #BD93F9         #242530         #242530
-output DP-1 bg ~/Pictures/Wallpapers/Ringo_Textless_Horizontal.png fill
-output DP-2 bg ~/Pictures/Wallpapers/Moe_Horizontal.png fill
-output DP-3 bg ~/Pictures/Wallpapers/Showa_Textless_Horizontal.png fill

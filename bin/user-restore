@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+bkup_dir=/run/media/$USER/Backups/Users/${USER}
+rsync -avrHP --progress ${bkup_dir}/Documents/ ~/Documents
+rsync -avrHP --progress ${bkup_dir}/Pictures/ ~/Pictures
+rsync -avrHP --progress ${bkup_dir}/Videos/ ~/Videos
+rsync -avrHP --progress ${bkup_dir}/Music/ ~/Music/
+rsync -avrHP --progress ${bkup_dir}/.steam/steam/userdata/51680080/config/ ~/.steam/userdata/51680080/config/
+rsync -avrHP --progress ${bkup_dir}/.local/bin/ ~/.local/bin/
+rsync -avrHP --progress ${bkup_dir}/.config/ ~/.config/
+rsync -avrHP --progress ${bkup_dir}/.ssh/ ~/.ssh/
+rsync -avrHP --progress ${bkup_dir}/.vim/ ~/.vim/
+rsync -avrHP --progress ${bkup_dir}/.librewolf/ ~/.librewolf/
+rsync -avrHP --progress ${bkup_dir}/.mozilla/ ~/.mozilla/
+rsync -avrHP --progress ${bkup_dir}/.icons/ ~/.icons/
+rsync -avrHP --progress ${bkup_dir}/.themes/ ~/.themes/
+cp ${bkup_dir}/.zshrc ~/.zshrc
+cp ${bkup_dir}/.bashrc ~/.bashrc
+cp ${bkup_dir}/.vimrc ~/.vimrc

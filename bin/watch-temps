@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+watch -tn 1 sensors amdgpu-pci-0300 k10temp-pci-00c3

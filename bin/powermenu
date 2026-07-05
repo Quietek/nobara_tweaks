@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+rofi_command="rofi -theme ~/.config/rofi/themes/powermenu-chicago.rasi -i"
+
+#### Options ###
+power_off="シャットダウン Power Off"
+reboot="再起動 Reboot"
+lock="画面をロック  Lock"
+hibernate="休止モード Hibernate"
+suspend="スリープモード Sleep"
+log_out="ログアウト Log Out"
+
+# Variable passed to rofi
+options="$power_off\n$reboot\n$suspend\n$hibernate\n$log_out\n$lock"
+chosen="$(echo -e "$options" | $rofi_command -dmenu -mesg "電源" )"
+case $chosen in
+    $lock)
+	    swaylock -i ~/Pictures/Wallpapers/Ringo_Textless_Horizontal.png
+        ;;    
+    $power_off)
+        systemctl poweroff
+        ;;
+    $reboot)
+        systemctl reboot 
+        ;;
+    $suspend)
+		systemctl suspend
+		swaylock -i ~/Pictures/Wallpapers/Ringo_Textless_Wallpaper.png 
+		;;
+    $hibernate)
+        systemctl hibernate
+        ;;
+    $log_out)
+        swaymsg exit
+        ;;
+esac

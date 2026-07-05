@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+while getopts u: flag
+do
+    case "${flag}" in
+        u) url=${OPTARG};;
+    esac
+done
+
+yt-dlp $url -o - | mpv -

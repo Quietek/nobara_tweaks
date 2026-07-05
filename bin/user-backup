@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+bkup_dir=/run/media/$USER/Backups/Users/${USER}
+rsync -avrHP --progress ~/Documents/ ${bkup_dir}/Documents/
+rsync -avrHP --progress ~/Pictures/ ${bkup_dir}/Pictures/
+rsync -avrHP --progress ~/Videos/ ${bkup_dir}/Videos/
+rsync -avrHP --progress ~/Music/ ${bkup_dir}/Music/
+rsync -avrHP --progress ~/homebrew/ ${bkup_dir}/homebrew/
+rsync -avrHP --progress ~/emudeck/ ${bkup_dir}/emudeck/
+rsync -avrHP --progress ~/.steam/steam/userdata/51680080/config/ ${bkup_dir}/.steam/userdata/51680080/config/
+rsync -avrHP --progress ~/.local/bin/ ${bkup_dir}/.local/bin/
+rsync -avrHP --progress ~/.config/ ${bkup_dir}/.config/
+rsync -avrHP --progress ~/.claws-mail/ ${bkup_dir}/.claws-mail/
+rsync -avrHP --progress ~/.ssh/ ${bkup_dir}/.ssh/
+rsync -avrHP --progress ~/.vim/ ${bkup_dir}/.vim/
+rsync -avrHP --progress ~/.renpy/ ${bkup_dir}/.renpy/
+rsync -avrHP --progress ~/.oh-my-zsh/ ${bkup_dir}/.oh-my-zsh/
+rsync -avrHP --progress ~/.librewolf/ ${bkup_dir}/.librewolf/
+rsync -avrHP --progress ~/.mozilla/ ${bkup_dir}/.mozilla/
+rsync -avrHP --progress ~/.icons/ ${bkup_dir}/.icons/
+rsync -avrHP --progress ~/.themes/ ${bkup_dir}/.themes/
+cp ~/.zshrc ${bkup_dir}/.zshrc
+cp ~/.fcuid ${bkup_dir}/.fcuid
+cp ~/.zkey ${bkup_dir}/.zkey
+cp ~/.git-credentials ${bkup_dir}/.git-credentials
+cp ~/.gitconfig ${bkup_dir}/.gitconfig
+cp ~/.profile ${bkup_dir}/.profile
+cp ~/.bash_profile ${bkup_dir}/.bash_profile
+cp ~/.zprofile ${bkup_dir}/.zprofile
+cp ~/.bashrc ${bkup_dir}/.bashrc
+cp ~/.vimrc ${bkup_dir}/.vimrc

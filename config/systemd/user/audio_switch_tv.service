@@ -1,0 +1,11 @@
+[Unit]
+Description=Gamescope Audio Switch Service
+After=network.target
+[Service]
+User=tannertracy
+Restart=always
+ExecStart=%h/.local/bin/audio-switch-tv
+ExecStop=killall -9 %h/.local/bin/audio-switch-tv
+WorkingDirectory=%h/.local/bin
+[Install]
+WantedBy=default.target

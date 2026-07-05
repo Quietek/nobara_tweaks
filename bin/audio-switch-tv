@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+result=$(pactl info | sed -n -e 's/^.*Default Sink: //p')
+proceed=1
+SECONDS=0
+if [[ $result == *"hdmi"* || $result == *"bluez"* ]]; then
+   proceed=0 
+fi
+while [[ $proceed == 1 ]]; 
+do
+    if [[ $result != *"hdmi"* && $result != *"bluez"* ]]; then
+        wpctl set-default $(wpctl status | grep "Navi" | grep "vol" | awk -F'[^0-9]+' '{ print $2 }')
+        SECONDS=0
+    fi
+    if [[ $SECONDS -gt 30 ]]; then
+        proceed=0
+    fi
+    result=$(pactl info | sed -n -e 's/^.*Default Sink: //p')
+    echo $result
+    echo $SECONDS
+    echo $proceed
+    sleep 0.1
+done

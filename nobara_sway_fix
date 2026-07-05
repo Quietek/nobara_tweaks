@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+echo "checking for os-session-select modifications..."
+if grep -q "\"sway\"" /usr/libexec/os-session-select; then
+    echo "sway already called in place of plasma in os-session-select, no changes made."
+else
+    echo "plasma, not sway, found in os-session-select! updating now..."
+    sudo sed -i "s/session_launcher=\"plasma\"/session_launcher=\"sway\"/" /usr/libexec/os-session-select
+    echo "modification to os-session-select complete."
+fi
+echo "checking for gamescope-session-plus modifications..."
+if grep -q "source ~/.profile" /usr/share/gamescope-session-plus/gamescope-session-plus; then
+    echo "profile already sourced in gamescope-session-plus, no changes made..."
+else
+    echo "profile not sourced in gamescope-session-plus! updating now..."
+    read -p "Would you like to start the decky plugin loader service when starting a gamescope session? [y/N]" yndecky
+    case $yndecky in
+        [Yy]* ) 
+            sudo sed -i "2i\
+            source ~\/.profile\n\
+            systemctl --user start plugin_loader.service" /usr/share/gamescope-session-plus/gamescope-session-plus;;
+        * )
+            sudo sed -i "2i\
+            source ~\/.profile\n" /usr/share/gamescope-session-plus/gamescope-session-plus;;
+    esac
+    echo "modifications to gamescope-session-plus complete."
+fi
+echo "checking for steamos-desktop-return modifications..."
+if grep -q "swaymsg exit" /usr/bin/steamos-desktop-return; then
+    echo "swaymsg exit call already replaced kde shutdown call, no changes made..."
+else
+    echo "kde shutdown call has not been replaced! updating now..."
+    sudo sed -i "s/exec qdbus org.kde.Shutdown \/Shutdown org.kde.Shutdown.logout/exec swaymsg exit/" /usr/bin/steamos-desktop-return
+    echo "modifications to steamos-desktop-return complete."
+fi
+echo "finished updating executables to use sway instead of kde."

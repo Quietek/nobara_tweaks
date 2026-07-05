@@ -1,0 +1,10 @@
+default_border normal 2
+font pango:LessPerfectDOSVGA 14
+gaps top 5
+gaps inner 5
+client.focused          #bdbdbd         #00007b         #ffffff         #00007b         #bdbdbd 
+client.focused_inactive #bdbdbd         #818181         #000000         #bdbdbd         #bdbdbd
+client.unfocused        #bdbdbd         #818181         #000000         #bdbdbd         #bdbdbd
+output DP-1 bg ~/Pictures/Wallpapers/Ringo_Textless_Horizontal.png fill
+output DP-2 bg ~/Pictures/Wallpapers/Moe_Horizontal.png fill
+output DP-3 bg ~/Pictures/Wallpapers/Showa_Textless_Horizontal.png fill

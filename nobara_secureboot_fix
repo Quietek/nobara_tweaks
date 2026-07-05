@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+read -p "This script will add custom secure boot keys for nobara to the system's BIOS and sign nobara's boot images. Make sure to run this as root using sudo su - and that secure boot is in setup mode prior to proceeding. Do you wish to proceed? [y/N]" proceedyn
+case $proceedyn in
+    [Yy]* ) echo "Checking if secure boot is in setup mode..."
+        if mokutil | grep -q 'Setup'; then
+            echo "Setup mode enabled! continuing..."
+            echo "Checking if running as root..."
+            if [[ $EUID -eq 0 ]]; then
+                echo "Running as root! Proceeding..."
+                echo "Creating secure boot keys..."
+                sbctl create-keys
+                echo "Keys created!"
+                echo "Enrolling keys in system bios..."
+                sbctl enroll-keys --microsoft
+                echo "Keys enrolled!"
+                echo "Signing efi boot images with newly enrolled key..."
+                sbctl sign-all
+                for file in /boot/*
+                do
+                    case file in
+                        vmlinuz* ) sbctl sign -s /boot/${file};;
+                    esac
+                done
+                echo "Finished signing boot images!"
+                echo "Attempting to rebuild boot images using dracut -f..."
+                dracut -f
+                echo "Boot images rebuilt!"
+                echo "You can now reboot into BIOS and enable secure boot"
+                echo "If you are still unable to boot with secure boot enabled, additional steps in BIOS may be necessary."
+                read -s -p "The system will now reboot. Press Enter to confirm..." temp
+                reboot
+            else
+                echo "Not running as root! Elevate to root priveleges with sudo su - then rerun this script"
+            fi
+        else
+            echo "Secure boot is not in setup mode! Please reboot to BIOS, put secure boot into setup mode, then rerun this script."
+        fi;;
+    * ) echo "No secure boot changes will be made.";;
+esac

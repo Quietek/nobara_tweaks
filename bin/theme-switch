@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+while getopts t: flag
+do
+	case "${flag}" in 
+        	t) theme=${OPTARG};;
+	esac
+done
+
+if [ "$theme"  = "Dracula" ] ; then
+	sed -i 's/chicago/dracula/' "$HOME/.config/sway/config" && rm "$HOME/.config/waybar/style.css" && cp "$HOME/.config/waybar/style-dracula.css" "$HOME/.config/waybar/style.css" && rm "$HOME/.config/waybar/config" && cp "$HOME/.config/waybar/config-dracula" "$HOME/.config/waybar/config" && rm "$HOME/.config/kitty/kitty.conf" && cp "$HOME/.config/kitty/kitty-dracula.conf" "$HOME/.config/kitty/kitty.conf" && sed -i 's/chicago/dracula/' "$HOME/.config/rofi/config.rasi" && sed -i 's/powermenu-chicago.rasi/powermenu-dracula.rasi/' "$HOME/.local/bin/powermenu" && rm "$HOME/.config/qutebrowser/config.py" && cp "$HOME/.config/qutebrowser/config-dracula.py" "$HOME/.config/qutebrowser/config.py"
+elif [ "$theme"  == "Chicago95"  ] ; then
+	sed -i 's/dracula/chicago/' "$HOME/.config/sway/config" &&  rm "$HOME/.config/waybar/style.css" && cp "$HOME/.config/waybar/style-chicago.css" "$HOME/.config/waybar/style.css" && rm "$HOME/.config/waybar/config" && cp "$HOME/.config/waybar/config-chicago" "$HOME/.config/waybar/config" && cp "$HOME/.config/kitty/kitty-chicago.conf" "$HOME/.config/kitty/kitty.conf" && sed -i 's/dracula/chicago/' "$HOME/.config/rofi/config.rasi" && sed -i 's/powermenu-dracula.rasi/powermenu-chicago.rasi/' "$HOME/.local/bin/powermenu" && rm "$HOME/.config/qutebrowser/config.py" && cp "$HOME/.config/qutebrowser/config-chicago.py" "$HOME/.config/qutebrowser/config.py"
+fi

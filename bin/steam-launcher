@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+export STEAM_COMPAT_DATA_PATH=/home/tanner/.proton/
+export STEAM_COMPAT_CLIENT_INSTALL_PATH=$(whereis steam-run | awk '{print $2}')
+#steam-run ~/.local/share/Steam/compatibilitytools.d/GE-Proton9-23/proton run ~/.local/bin/SteamEdit/SteamEdit.exe -autofix
+wine ~/.local/bin/steam-edit/SteamEdit.exe -autofix
+wait
+mullvad-exclude steam

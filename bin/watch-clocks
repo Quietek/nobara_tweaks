@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+watch -tn 1 "cat /proc/cpuinfo | grep 'cpu MHz'"

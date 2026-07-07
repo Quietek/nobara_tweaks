@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 echo "This setup will help you setup a usb drive to automatically unlock a root luks partition at boot."
-echo "This requires a USB disk connected, which will be formatted and erased, and root privileges."  
+echo "This requires a USB disk connected, with a matching name in /sys/block/ and /dev/, and which will be formatted and erased, and root privileges."  
 read -p "Do you wish to continue? [y/N]" luksusbyn
 case $luksusbyn in
     [Yy]* ) echo "Searching for USB Disks..."
@@ -26,18 +26,37 @@ case $luksusbyn in
                 read -p "This is your last warning! All data on the disk ${devpath} will be erased if you continue! Do you wish to continue? [y/N]" formatyn
                 case $formatyn in
                     [Yy]* ) echo "Formatting disk..."
-                    echo "This is where the disk would be formatted."
-                    echo "This is where the keyfile would be generated"
-                    echo "This is where the keyfile would be added to your luks disk"
-                    echo "This is where the keyfile would be copied to your usb drive"
-                    echo "This is where the keyfile would be added to crypttab"
-                    echo "This is where you would rebuild your boot image with dracut -f"
+                    mkfs.vfat -F 32 -n "USBKEY" ${devpath}
+                    echo "Disk formatted."
+                    echo "Generating randomized keyfile..."
+                    dd if=/dev/urandom of=/root/luks-unlock.key bs=1 count=4096
+                    echo "Keyfile generated."
+                    echo "Scanning for luks partition..."
+                    luksdevice=/dev/$(findmnt / -rvno SOURCE | xargs realpath --relative-to /dev | xargs -I{} ls /sys/block/{}/slaves/)
+                    echo "${luksdevice}"
+                    echo "Adding keyfile to luks keys..."
+                    echo "Please type in your luks password when prompted."
+                    cryptsetup luksAddKey ${luksdevice} /root/luks-unlock.key --key-slot 1
+                    echo "Key added to luks device."
+                    echo "Mounting newly formatted USB..."
+                    mkdir -p /mnt/usb-key/
+                    mount ${devpath}1 /mnt/usb-key/
+                    echo "USB Key mounted."
+                    echo "Moving keyfile to USB..."
+                    mv /root/luks-unlock.key /mnt/usb-key/key
+                    echo "Keyfile moved to USB."
+                    echo "Modifying crypttab..."
+                    sed -i "s/none none/\/key:LABEL=USBKEY luks,keyfile-timeout=5s/" /etc/crypttab
+                    echo "Crypttab modified."
+                    echo "Rebuilding boot image with dracut -f..."
+                    dracut -f
+                    echo "Boot image rebuilt!"
                     echo "USB key successfully created! Your computer's Luks partition should unlock automatically at boot so long as the USB key is connected."
                     echo "If the USB key is not detected, the system will wait for a standard password input."
                     echo "Luks USB key unlock setup is complete!";;
                     * ) echo "Format canceled! You can rerun this script later if you wish to continue.";;
                 esac;;
             * ) echo "No USB key selected. Exiting without making any changes.";;
-        esac
+        esac;;
     * ) echo "No changes to luks disk unlock will be made.";;
 esac

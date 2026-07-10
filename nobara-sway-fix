@@ -1,11 +1,38 @@
 #!/usr/bin/env bash
 
+
+if [[ $EUID -ne 0 ]]; then
+    echo "This script must be run as root!"
+    echo "Try again with: sudo ./nobara-sway-fix"
+    exit 1
+fi
+echo "this script will replace any calls to kde plasma with equivalent calls to swaywm instead"
+echo "this script may be necessary to run again after nobara updates."
+echo "i am not responsible for any problems this may cause on your system."
+echo "this script contains no uninstall functions, so if you decide to revert later you will have to manually remove these modifications from your nobara installation or reinstall completely!"
+echo "files modified include:"
+echo "/usr/libexec/os-session-select"
+echo "/usr/share/gamescope-session-plus/gamescope-session-plus"
+echo "/usr/bin/steamos-desktop-return"
+echo "/etc/sudoers"
+echo "files created include:"
+echo "/etc/polkit-1/rules.d/99-polkit-plasmalogin.rules"
+read -p "only proceed if you have read and understand the above, otherwise, press ctrl-c to exit." proceedyn
+echo "checking if sway has been installed already..."
+if rpm -q "sway" &>/dev/null; then
+    echo "sway is already installed!"
+else
+    echo "sway is not installed! installing now..."
+    dnf -y install sway
+    echo "sway has been installed!"
+fi
+echo "check for sway complete!"
 echo "checking for os-session-select modifications..."
 if grep -q "\"sway\"" /usr/libexec/os-session-select; then
     echo "sway already called in place of plasma in os-session-select, no changes made."
 else
     echo "plasma, not sway, found in os-session-select! updating now..."
-    sudo sed -i "s/session_launcher=\"plasma\"/session_launcher=\"sway\"/" /usr/libexec/os-session-select
+    sed -i "s/session_launcher=\"plasma\"/session_launcher=\"sway\"/" /usr/libexec/os-session-select
     echo "modification to os-session-select complete."
 fi
 echo "checking for gamescope-session-plus modifications..."
@@ -16,21 +43,31 @@ else
     read -p "Would you like to start the decky plugin loader service when starting a gamescope session? [y/N]" yndecky
     case $yndecky in
         [Yy]* ) 
-            sudo sed -i "2i\
+            sed -i "2i\
             source ~\/.profile\n\
-            systemctl --user start plugin_loader.service" /usr/share/gamescope-session-plus/gamescope-session-plus;;
+systemctl --user start plugin_loader.service" /usr/share/gamescope-session-plus/gamescope-session-plus;;
         * )
-            sudo sed -i "2i\
+            sed -i "2i\
             source ~\/.profile\n" /usr/share/gamescope-session-plus/gamescope-session-plus;;
     esac
     echo "modifications to gamescope-session-plus complete."
 fi
 echo "checking for steamos-desktop-return modifications..."
-if grep -q "swaymsg exit" /usr/bin/steamos-desktop-return; then
-    echo "swaymsg exit call already replaced kde shutdown call, no changes made..."
+if grep -q "systemctl restart plasmalogin.service" /usr/bin/steamos-desktop-return; then
+    echo "systemctl restart plasmalogin.service call already replaced kde shutdown call, no changes being made..."
+    echo "if you need to rerun this script, make sure to remove all references to systemctl restart plasmalogin.service from /usr/bin/steamos-desktop-return"
 else
     echo "kde shutdown call has not been replaced! updating now..."
-    sudo sed -i "s/exec qdbus org.kde.Shutdown \/Shutdown org.kde.Shutdown.logout/exec swaymsg exit/" /usr/bin/steamos-desktop-return
+    sed -i "s/exec qdbus org.kde.Shutdown \/Shutdown org.kde.Shutdown.logout/exec systemctl restart plasmalogin.service/" /usr/bin/steamos-desktop-return
     echo "modifications to steamos-desktop-return complete."
+    echo "making modifications to allow passwordless plasmalogin service restart to sudoers file..."
+    echo "${SUDO_USER} ALL=NOPASSWD: /bin/systemctl restart plasmalogin.service" >> /etc/sudoers
+    echo "sudoers file successfully modified!"
+    echo "adding polkit rule..."
+    cp ./99-polkit-plasmalogin.rules "/etc/polkit-1/rules.d/"
+    echo "polkit rule added!"
+    echo "restarting polkit service..."
+    systemctl restart polkit.service
+    echo "polkit restarted!"
 fi
 echo "finished updating executables to use sway instead of kde."
